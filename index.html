@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sofiita te amo 💗</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle, #2b0033, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.container {
+    text-align: center;
+}
+
+/* ❤️ CORAZÓN */
+.heart {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    transform: rotate(-45deg);
+    background: pink;
+    animation: beat 1s infinite;
+}
+
+.heart::before,
+.heart::after {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: pink;
+    border-radius: 50%;
+}
+
+.heart::before {
+    top: -50px;
+    left: 0;
+}
+
+.heart::after {
+    left: 50px;
+    top: 0;
+}
+
+@keyframes beat {
+    0%, 100% { transform: scale(1) rotate(-45deg); }
+    50% { transform: scale(1.2) rotate(-45deg); }
+}
+
+/* Texto */
+.text {
+    margin-top: 30px;
+    font-size: 28px;
+    color: #ff99cc;
+}
+
+/* Botón */
+button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 25px;
+    border: none;
+    background: #ff99cc;
+    color: white;
+    cursor: pointer;
+}
+
+/* Imagen */
+.photo {
+    display: none;
+    margin-top: 20px;
+}
+
+.photo img {
+    width: 250px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px pink;
+    animation: aparecer 0.8s ease;
+}
+
+@keyframes aparecer {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Corazones flotando */
+.love {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #f4b6c2;
+    transform: rotate(-45deg);
+    animation: float 4s linear forwards;
+}
+
+.love::before,
+.love::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #f4b6c2;
+    border-radius: 50%;
+}
+
+.love::before { top: -10px; }
+.love::after { left: 10px; }
+
+@keyframes float {
+    0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+    100% { transform: translateY(-600px) rotate(-45deg); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="heart"></div>
+    <div class="text">Sofiita mi amor, te amo 💗</div>
+
+    <button onclick="mostrar()">Eres mi lugar favorito en el mundo 💗</button>
+
+    <div class="photo" id="photo">
+        <img src="miamor.png">
+    </div>
+
+    <!-- 🎵 MÚSICA -->
+    <audio id="musica" src="musica.mp3"></audio>
+
+</div>
+
+<script>
+function mostrar() {
+    document.getElementById("photo").style.display = "block";
+    document.querySelector("button").style.display = "none";
+
+    // 🎵 reproducir música
+    let musica = document.getElementById("musica");
+    musica.play();
+
+    for (let i = 0; i < 40; i++) {
+        let h = document.createElement("div");
+        h.classList.add("love");
+
+        h.style.left = Math.random() * window.innerWidth + "px";
+        h.style.top = window.innerHeight + "px";
+
+        document.body.appendChild(h);
+
+        setTimeout(() => h.remove(), 4000);
+    }
+}
+</script>
+
+</body>
+</html>
