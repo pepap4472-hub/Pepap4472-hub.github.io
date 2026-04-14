@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Sofia</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fce4ec;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Contenedor principal para centrarlo todo */
+        #mainContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* --- ACTUALIZADO: Corazón central latiente PERFECTAMENTE centrado --- */
+        .heart-wrapper {
+            position: relative;
+            /* El ancho y alto deben ser iguales para centrar el círculo de corazones */
+            width: 300px;
+            height: 300px;
+            animation: beat 1.2s infinite ease-in-out;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .character {
+            position: absolute;
+            font-size: 50px;
+            color: #d81b60;
+            font-weight: bold;
+            z-index: 11;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            white-space: nowrap;
+        }
+
+        .heart-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff1744;
+            transform: rotate(-45deg);
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .heart-point::before, .heart-point::after {
+            content: "";
+            position: absolute;
+            width: 20px; height: 20px;
+            background-color: #ff1744; border-radius: 50%;
+        }
+        .heart-point::before { top: -10px; left: 0; }
+        .heart-point::after { left: 10px; top: 0; }
+
+        /* Estilo de los Botones */
+        .btn {
+            padding: 12px 25px;
+            font-size: 18px;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            z-index: 100;
+        }
+
+        #magicButton { background-color: #d81b60; margin-top: 50px; }
+
+        /* Contenedor de la propuesta */
+        #proposalSection {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .proposal-text {
+            font-size: 1.5rem;
+            color: #d81b60;
+            font-weight: bold;
+            margin-bottom: 20px;
+            max-width: 80%;
+        }
+
+        .options-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        #btnSi { background-color: #4caf50; }
+        #btnNo { background-color: #f44336; position: relative; }
+
+        /* Elementos Flotantes */
+        .floating-heart, .floating-text {
+            position: absolute;
+            bottom: -100px;
+            user-select: none;
+            pointer-events: none;
+            animation: floatUp linear forwards;
+            z-index: 5;
+        }
+
+        .floating-text {
+            font-size: 1.5rem;
+            color: #d81b60;
+            font-weight: bold;
+            white-space: nowrap;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        /* Animaciones */
+        @keyframes beat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mainContainer">
+        <div class="heart-wrapper" id="mainWrapper">
+            <div class="character">Evelin</div>
+            <div id="heartContainer"></div>
+        </div>
+
+        <button id="magicButton" class="btn">Tengo algo que decirte... ❤️</button>
+
+        <div id="proposalSection">
+            <div class="proposal-text">Vamos hacer el amor aceptas?</div>
+            <div class="options-container">
+                <button id="btnSi" class="btn">¡Sí! ❤️</button>
+                <button id="btnNo" class="btn">No 😢</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('heartContainer');
+        const mainBtn = document.getElementById('magicButton');
+        const proposalSection = document.getElementById('proposalSection');
+        const btnSi = document.getElementById('btnSi');
+        const btnNo = document.getElementById('btnNo');
+
+        // Formación del corazón central (puntos relativos al centro del wrapper)
+        const points = [
+            {r: 100, a: 0}, {r: 100, a: 30}, {r: 100, a: 60}, {r: 100, a: 90}, {r: 100, a: 120},
+            {r: 100, a: 150}, {r: 100, a: 180}, {r: 100, a: 210}, {r: 100, a: 240}, {r: 100, a: 270},
+            {r: 100, a: 300}, {r: 100, a: 330},
+            // Puntos de la punta inferior
+            {x: 150, y: 250}, {x: 130, y: 230}, {x: 170, y: 230},
+            // Puntos superiores
+            {x: 110, y: 100}, {x: 190, y: 100},
+            // Relleno
+            {x: 150, y: 130}
+        ];
+
+        // --- ACTUALIZADO: Lógica de posicionamiento para centrar perfectamente ---
+        points.forEach((p, i) => {
+            setTimeout(() => {
+                const h = document.createElement('div');
+                h.className = 'heart-point';
+
+                if (p.r !== undefined) {
+                    // Posicionamiento radial para el círculo
+                    const angle = (p.a - 90) * (Math.PI / 180); // Ajuste de ángulo
+                    h.style.left = (150 + p.r * Math.cos(angle)) + 'px';
+                    h.style.top = (150 + p.r * Math.sin(angle)) + 'px';
+                } else {
+                    // Posicionamiento absoluto ajustado
+                    h.style.left = p.x + 'px';
+                    h.style.top = p.y + 'px';
+                }
+                
+                container.appendChild(h);
+            }, i * 100);
+        });
+
+        // Paso 1: Mostrar propuesta
+        mainBtn.addEventListener('click', () => {
+            mainBtn.style.display = 'none';
+            proposalSection.style.display = 'flex';
+        });
+
+        // Paso 2: Aceptar (Magia)
+        btnSi.addEventListener('click', () => {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createFloatingHeart, i * 150);
+            }
+            // Lanza varias frases para que se vea lleno
+            for (let j = 0; j < 5; j++) {
+                setTimeout(createFloatingText, j * 300);
+            }
+        });
+
+        // Botón NO se escapa
+        const moveButton = () => {
+            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight);
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = x + 'px';
+            btnNo.style.top = y + 'px';
+        };
+
+        btnNo.addEventListener('mouseover', moveButton);
+        btnNo.addEventListener('touchstart', moveButton);
+
+        function createFloatingHeart() {
+            const h = document.createElement('div');
+            h.className = 'floating-heart';
+            h.innerHTML = '❤️';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 6000);
+        }
+
+        function createFloatingText() {
+            const t = document.createElement('div');
+            t.className = 'floating-text';
+            t.innerHTML = 'Que ricooo';
+            t.style.left = (Math.random() * 60 + 10) + 'vw';
+            t.style.animationDuration = (Math.random() * 2 + 5) + 's';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 8000);
+        }
+    </script>
+</body>
+</html>
